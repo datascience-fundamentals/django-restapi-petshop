@@ -1,5 +1,5 @@
 from functools import reduce
-from rest_framework import status, viewsets, permissions
+from rest_framework import status, viewsets, generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from . import serializers
@@ -135,6 +135,21 @@ class BreedViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Concrete view for listing a queryset or creating a model instance.
+class PetshopListCreateView(generics.ListCreateAPIView):
+    queryset = models.Petshop.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.PetshopModelSerializer
+
+# Concrete view for retrieving, updating or deleting a model instance.
+
+
+class PetshopRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Petshop.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.PetshopModelSerializer
+
+
 person_view = {
     "persons_crd": persons_crd,
     "person_rud": person_rud,
@@ -146,4 +161,9 @@ adoption_view = {
 
 breed_view = {
     "breed_crud": BreedViewSet,
+}
+
+petshop_view = {
+    "petshops_cr": PetshopListCreateView,
+    "petshop_rud": PetshopRetrieveUpdateDestroy,
 }

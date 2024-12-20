@@ -19,5 +19,9 @@ urlpatterns = [
              "put": "update",
              "patch": "partial_update",
              "delete": "destroy",
-         }), name="breed_rupd")
+         }), name="breed_rupd"),
+    path("petshop/shelter",
+         views.petshop_view["petshops_cr"].as_view(), name="petshops_cr"),
+    path("petshop/shelter/<int:pk>",
+         views.petshop_view["petshop_rud"].as_view(), name="petshop_rud"),
 ]

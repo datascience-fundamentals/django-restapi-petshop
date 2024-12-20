@@ -17,6 +17,7 @@ class PersonModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Person
         # fields -> define the list of properties to include in the serialized output and deserialized input
+        #           By default all these properties are required
         fields = ["id", "name", "dni", "gender", "age"]
         # read_only_fields -> ensure that certain fields can not be updated by api clients
         read_only_fields = ["id"]
@@ -63,5 +64,13 @@ class BreedModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Breed
         # all fields are going to be serialize and deserialized
+        fields = "__all__"
+        read_only_fields = ["id"]
+
+
+class PetshopModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Petshop
         fields = "__all__"
         read_only_fields = ["id"]
