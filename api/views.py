@@ -1,5 +1,5 @@
 from functools import reduce
-from rest_framework import status
+from rest_framework import status, viewsets, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from . import serializers
@@ -24,7 +24,7 @@ def persons_crd(request):
     try:
         if "POST" == request.method:
             api_req = request.data
-            person_serialize = serializers.PersonSerializer(data=api_req)
+            person_serialize = serializers.PersonModelSerializer(data=api_req)
             if not person_serialize.is_valid():
                 return Response(data=person_serialize.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -37,7 +37,7 @@ def persons_crd(request):
             if not len(persons):
                 api_resp = {"msg": "Persons empty"}
             else:
-                persons_serialize = serializers.PersonSerializer(
+                persons_serialize = serializers.PersonModelSerializer(
                     persons, many=True)
                 api_resp = {"msg": "Persons founded sucessfully",
                             "person": persons_serialize.data}
@@ -60,7 +60,7 @@ def person_rud(request, pk):
         if "GET" == request.method:
             if models.Person.objects.filter(pk=pk).exists():
                 person = models.Person.objects.get(pk=pk)
-                person_serializer = serializers.PersonSerializer(person)
+                person_serializer = serializers.PersonModelSerializer(person)
                 api_resp = {"msg": "Person founded sucessfully",
                             "person": person_serializer.data}
             else:
@@ -71,7 +71,7 @@ def person_rud(request, pk):
                 person = models.Person.objects.get(pk=pk)
                 api_req = request.data
 
-                person_serializer = serializers.PersonSerializer(
+                person_serializer = serializers.PersonModelSerializer(
                     person, data=api_req)
                 if not person_serializer.is_valid():
                     return Response(data=person_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -122,6 +122,19 @@ def adoption_hist(request):
         return Response(data={"msg": "Error at processing"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+# THis viewset provides default `create()`, `retrieve()`, `update()`,
+# `partial_update()`, `destroy()` and `list()` actions.
+class BreedViewSet(viewsets.ModelViewSet):
+    queryset = models.Breed.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = serializers.BreedModelSerializer
+
+    # ovverride and implement delete method http to remove all breed rows
+    def delete(self, request, *args, **kwargs):
+        models.Breed.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 person_view = {
     "persons_crd": persons_crd,
     "person_rud": person_rud,
@@ -129,4 +142,8 @@ person_view = {
 
 adoption_view = {
     "adoption_hist": adoption_hist,
+}
+
+breed_view = {
+    "breed_crud": BreedViewSet,
 }

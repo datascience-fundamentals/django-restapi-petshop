@@ -8,7 +8,7 @@ from datetime import datetime
 """
 
 
-class PersonSerializer(serializers.ModelSerializer):
+class PersonModelSerializer(serializers.ModelSerializer):
     # all these properties validate the input values passed in the data property
     dni = serializers.CharField(min_length=8, max_length=8, required=True)
     gender = serializers.ChoiceField(choices=["0", "1"], required=True)
@@ -18,6 +18,7 @@ class PersonSerializer(serializers.ModelSerializer):
         model = models.Person
         # fields -> define the list of properties to include in the serialized output and deserialized input
         fields = ["id", "name", "dni", "gender", "age"]
+        # read_only_fields -> ensure that certain fields can not be updated by api clients
         read_only_fields = ["id"]
 
     # validate_<fieldname>
@@ -54,4 +55,13 @@ class AdoptionHistModelSerializer(serializers.ModelSerializer):
         model = models.Adoption
         fields = ["id", "person_name", "pet_name",
                   "breed_name", "adoption_date"]
-        fields_read_only = ["id"]
+        read_only_fields = ["id"]
+
+
+class BreedModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Breed
+        # all fields are going to be serialize and deserialized
+        fields = "__all__"
+        read_only_fields = ["id"]
