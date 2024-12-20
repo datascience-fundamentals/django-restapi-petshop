@@ -10,6 +10,7 @@ This respository contains an django rest api example relate to petshop
 
 ### Startup
 ```
+pipenv shell (connect virtual environment instance)
 pipenv sync (intall depdency versions defined on Pipfile.lock)
 py manage.py makemigrations
 py manahe.py migrate
